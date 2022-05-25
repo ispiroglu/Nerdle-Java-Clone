@@ -1,11 +1,15 @@
 package edu.ytu.nerdle.core.util.equation;
 
+import edu.ytu.nerdle.core.model.equationSubject.IEquationSubject;
+import edu.ytu.nerdle.core.model.operand.Digit;
+import edu.ytu.nerdle.core.model.operation.Operator;
+
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
 public class EquationUtil {
-
-    private static final String ms_operators = "+-*";
+    private static final String ms_operators = "+-*/";
     private static boolean isdigit(char c)  {
         return c >= '0' && c <= '9';
     }
@@ -88,7 +92,7 @@ public class EquationUtil {
         String equation = "";
         int num1 = getRandomNumber(r);
         int num2 = getRandomNumber(r);
-        char op = getRandomOperator();
+        char op = getRandomOperator(r);
 
         if (op == '-')
             if (num1 < num2) {
@@ -100,7 +104,6 @@ public class EquationUtil {
         equation += num1;
         equation += op;
         equation += num2;
-        equation += "=";
 
         if (equation.length() != equationLength)
             return generateEquation(r, equationLength);
@@ -122,4 +125,37 @@ public class EquationUtil {
         prefix = reverse(prefix.toCharArray(), 0, l-1);
         return prefix;
     }
+
+    public static ArrayList<IEquationSubject> getRandomEquation(int equationLength) {
+        ArrayList<IEquationSubject> list = new ArrayList<>(7);
+
+        Digit d1 = new Digit();
+        Digit d2 = new Digit();
+        Digit d3 = new Digit();
+        Operator op = new Operator();
+
+        if (op.getOperation() == '-')
+            if (d1.getDigit() < d2.getDigit()) {
+                int tmp = d1.getDigit();
+                d1.setDigit(d2.getDigit());
+                d2.setDigit(tmp);
+            }
+
+
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
