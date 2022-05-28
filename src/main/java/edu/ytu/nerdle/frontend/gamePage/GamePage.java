@@ -1,11 +1,10 @@
 package edu.ytu.nerdle.frontend.gamePage;
 
 import javax.swing.*;
-
-public class GamePage {
+public class GamePage extends JDialog {
+    private JPanel contentPane;
     private JPanel gamePanel;
     private JPanel equationField;
-    private JPanel operationFields;
     private JPanel equationField1_1;
     private JPanel equationField1_2;
     private JPanel equationField1_3;
@@ -60,6 +59,34 @@ public class GamePage {
     private JPanel equationField6_7;
     private JPanel equationField6_8;
     private JPanel equationField_6_9;
+    private JPanel operationFields;
+    private JPanel operationField1_1;
+    private JPanel operationField1_2;
+    private JPanel operationField1_3;
+    private JPanel operationField1_4;
+    private JPanel operationField1_5;
+    private JPanel operationField1_6;
+    private JPanel operationField1_7;
+    private JPanel operationField1_8;
+    private JPanel operationField1_9;
+    private JPanel operationField2_1;
+    private JPanel operationField2_2;
+    private JPanel operationField2_3;
+    private JPanel operationField2_4;
+    private JPanel operationField2_5;
+    private JPanel operationField2_6;
+    private JPanel operationField2_7;
+    private JPanel operationField2_8;
+    private JPanel operationField2_9;
+    public GamePage() {
+        setContentPane(contentPane);
+        setModal(true);
+    }
 
-
+    public static void main(String[] args) {
+        GamePage dialog = new GamePage();
+        dialog.pack();
+        dialog.setVisible(true);
+        System.exit(0);
+    }
 }
