@@ -1,11 +1,19 @@
 package edu.ytu.nerdle.frontend.gamePage;
 
+import edu.ytu.nerdle.core.util.equation.EquationUtil;
+import edu.ytu.nerdle.core.util.string.StringUtil;
+import edu.ytu.nerdle.core.util.validation.inputValidator.InputValidator;
+import edu.ytu.nerdle.frontend.lossPage.LossPage;
+import edu.ytu.nerdle.frontend.winningPage.WinPage;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GamePage extends JDialog {
+    private String equation;
     private JPanel contentPane;
     private JPanel gamePanel;
     private JPanel equationField;
@@ -102,13 +110,7 @@ public class GamePage extends JDialog {
     private JLabel label1_1;
     private JLabel label1_2;
     private JLabel label1_3;
-    private JLabel label1_4;
-    private JLabel label1_5;
-    private JLabel label1_6;
-    private JLabel label1_7;
-    private JLabel label1_8;
-    private JLabel label1_9;
-    private JPanel operationField2_6;
+    private JPanel equalSignPanel;
     private JLabel equalSignLabel;
     private JLabel selectedLabel;
 
@@ -126,6 +128,11 @@ public class GamePage extends JDialog {
     public GamePage() {
         setContentPane(contentPane);
         setModal(true);
+
+        equation = EquationUtil.getEquationString();
+        System.out.println("-----------------------------------");
+        System.out.println(equation);
+        System.out.println("-----------------------------------");
 
         rows = new ArrayList<>();
 
@@ -851,16 +858,64 @@ public class GamePage extends JDialog {
                 int idx  = 0;
                 boolean isOK = true;
 
-                while(isOK && idx < rows.get(selectedIndex).size()) {
+                while(isOK && idx < equation.length()) {
                     JLabel label = (JLabel)(rows.get(selectedIndex).get(idx++).getComponent(0));
                     if (label.getText().isEmpty())
                         isOK = false;
                 }
 
+
                 if (!isOK)
                     JOptionPane.showMessageDialog(null, "Lütfen bütün denklemi tamamlayıp öyle tahmin ediniz.");
                 else // Should check the equation result
-                    System.out.println("tahmin islemi yapildi.");
+                {
+                    idx = 0;
+                    var selectedRow = rows.get(selectedIndex);
+                    if (! new InputValidator().isValid(StringUtil.inputToString(selectedRow)))
+                        JOptionPane.showMessageDialog(null, "Lütfen girdiğiniz denklemin doğruluğundan emin olun.");
+                    else {
+                        int correctCount = 0;
+                        for (JPanel iteratorPanel : selectedRow) {
+                            String equationChar =  "" + equation.charAt(idx++);
+                            String inputChar = ((JLabel)iteratorPanel.getComponent(0)).getText();
+
+                            System.out.println("----------");
+                            System.out.println(equationChar);
+                            System.out.println(inputChar);
+                            System.out.println("----------");
+
+                            if (equationChar.equals(inputChar))
+                            {
+                                iteratorPanel.setBackground(new Color(Color.GREEN.getRGB()));
+                                correctCount++;
+                            }
+
+                            else {
+                                if (equation.contains(inputChar))
+                                    iteratorPanel.setBackground(new Color(Color.YELLOW.getRGB()));
+                                else
+                                    iteratorPanel.setBackground((new Color(Color.RED.getRGB())));
+                            }
+                        }
+                        if (correctCount == equation.length()) {
+                            WinPage winPage = new WinPage();
+                            winPage.pack();
+                            winPage.setVisible(true);
+                            dispose();
+                        }
+                        else {
+                            guessCount++;
+                        }
+                        if (guessCount > 6)
+                        {
+                            LossPage lossPage = new LossPage();
+                            lossPage.pack();
+                            lossPage.setVisible(true);
+                            dispose();
+                        }
+                    }
+                }
+
             }
         });
 
@@ -982,6 +1037,14 @@ public class GamePage extends JDialog {
                 super.mouseClicked(e);
                 if (selectedLabel != null)
                     selectedLabel.setText("");
+            }
+        });
+        equalSignPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (selectedLabel != null)
+                    selectedLabel.setText("=");
             }
         });
     }
