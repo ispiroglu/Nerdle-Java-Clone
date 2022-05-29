@@ -1,4 +1,4 @@
-package edu.ytu.nerdle.frontend.winingPage;
+package edu.ytu.nerdle.frontend.winningPage;
 
 import javax.swing.*;
 
