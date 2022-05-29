@@ -11,7 +11,7 @@ public class Digit implements IEquationSubject {
         this.digit = digit;
     }
 
-    private final static int[] digits = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private final static int[] digits = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     public Digit() {
         digit = digits[new Random().nextInt(10)];
@@ -19,5 +19,10 @@ public class Digit implements IEquationSubject {
 
     public int getDigit() {
         return digit;
+    }
+
+    @Override
+    public String toString() {
+        return "" + digit;
     }
 }
