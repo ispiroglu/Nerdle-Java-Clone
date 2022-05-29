@@ -8,10 +8,12 @@ import java.util.ArrayList;
 public class Equation {
     private ArrayList<IEquationSubject> equation;
 
-    public Equation(int equationLength) {
-        this.equation = new ArrayList<>(equationLength);
-//        EquationUtil.
+    public Equation(ArrayList<IEquationSubject> equation) {
+        this.equation = equation;
     }
 
+    public ArrayList<IEquationSubject> getEquation() {
+        return equation;
+    }
 
 }
