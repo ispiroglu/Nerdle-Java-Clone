@@ -32,7 +32,6 @@ public class GenerateEquation {
         initPosAndOperators();
         initOptions();
 
-
         System.out.println("Su ana kadar eldekiler..");
         System.out.println("Options");
         for (Digit option : options)
@@ -64,6 +63,8 @@ public class GenerateEquation {
 
         System.out.println("EQUATION");
         System.out.println(equation);
+
+
 
     }
 
@@ -133,18 +134,18 @@ public class GenerateEquation {
     }
 
     public static void main(String[] args) {
-        Equation equation = new Equation(new GenerateEquation().getEquation());
-        System.out.println("Islem ");
-        String equationString = "";
-        for (IEquationSubject equationSubject : equation.getEquation()) {
-            if (equationSubject.getClass() == Digit.class)
-                equationString += equationSubject;
-            else
-                equationString += " " + equationSubject + " ";
+        String equationString;
+        do {
+            System.out.println("--------------------------------------");
+            try {
+                equationString = EquationUtil.isValidEquation(
+                        new Equation(new GenerateEquation().getEquation())
+                );
+            }catch (UnsupportedOperationException e) {
+                equationString = null;
+            }
         }
-        equationString = equationString.trim();
-        System.out.println(equationString);
-        System.out.println(EvaluateString.evaluate(equationString)
-);
+        while (equationString == null) ;
+
     }
 }

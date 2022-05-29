@@ -39,10 +39,9 @@ public class MainPage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-//                TestPage testPage = new TestPage();
-//                testPage.pack();
-//                testPage.setVisible(true);
-                JOptionPane.showMessageDialog(null, "Özlü söz");
+                TestPage testPage = new TestPage();
+                testPage.pack();
+                testPage.setVisible(true);
             }
         });
     }

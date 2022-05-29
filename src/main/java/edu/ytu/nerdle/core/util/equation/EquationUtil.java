@@ -1,161 +1,45 @@
 package edu.ytu.nerdle.core.util.equation;
 
+import edu.ytu.nerdle.core.model.equation.Equation;
 import edu.ytu.nerdle.core.model.equationSubject.IEquationSubject;
 import edu.ytu.nerdle.core.model.operand.Digit;
-import edu.ytu.nerdle.core.model.operation.Operator;
-
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Stack;
 
 public class EquationUtil {
-    private static final String ms_operators = "+-*/";
-    private static boolean isdigit(char c)  {
-        return c >= '0' && c <= '9';
-    }
-    private static boolean isOperator(char c) {
-        return (!isdigit(c));
-    }
-    private static int getPriority(char C) {
-        if (C == '-' || C == '+')
-            return 1;
-        else if (C == '*' || C == '/')
-            return 2;
-        return 0;
-    }
-    private static String reverse(char[] str, int start, int end) {
-        char temp;
-        while (start < end)
-        {
-            temp = str[start];
-            str[start] = str[end];
-            str[end] = temp;
-            start++;
-            end--;
+    static String isValidEquation(Equation equation) {
+        String equationString = "";
+        for (IEquationSubject equationSubject : equation.getEquation()) {
+            if (equationSubject.getClass() == Digit.class)
+                equationString += equationSubject;
+            else
+                equationString += " " + equationSubject + " ";
         }
-        return String.valueOf(str);
+        equationString = equationString.trim();
+        int result = EvaluateString.evaluate(equationString);
+
+        if (result < 0)
+            return null;
+
+        equationString = equationString.replaceAll("\\s", "");
+        equationString += "=";
+        equationString += result;
+
+        if (equationString.length() < 7 || equationString.length() > 9)
+            return null;
+        return  equationString;
     }
-    private static String infixToPostfix(char[] infix1) {
-        System.out.println(infix1);
-        String infix = '(' + String.valueOf(infix1) + ')';
-        int l = infix.length();
-        Stack<Character> charStack = new Stack<>();
-        String output="";
-        for (int i = 0; i < l; i++)
-        {
-            if (isdigit(infix.charAt(i)))
-                output += infix.charAt(i);
-
-            else if (infix.charAt(i) == '(')
-                charStack.add('(');
-
-            else if (infix.charAt(i) == ')') {
-                while (charStack.peek() != '(') {
-                    output += charStack.peek();
-                    charStack.pop();
-                }
-                charStack.pop();
-            }
-            else {
-                if (isOperator(charStack.peek()))
-                {
-                    while ((getPriority(infix.charAt(i)) < getPriority(charStack.peek()))
-                            || (getPriority(infix.charAt(i)) <= getPriority(charStack.peek()) &&  infix.charAt(i) == '^')) {
-                        output += charStack.peek();
-                        charStack.pop();
-                    }
-                    charStack.add(infix.charAt(i));
-                }
+    public static String getEquationString() {
+        String equationString;
+        do {
+            try {
+                equationString = EquationUtil.isValidEquation(
+                        new Equation(new GenerateEquation().getEquation())
+                );
+            }catch (UnsupportedOperationException e) {
+                equationString = null;
             }
         }
-        while(!charStack.empty()){
-            output += charStack.pop();
-        }
-        return output;
+        while (equationString == null) ;
+        return equationString;
     }
-
-    private static int getRandomNumber(Random r) {
-        return r.nextInt(100);
-    }
-    private static int getRandomNumber() {
-        return getRandomNumber(new Random());
-    }
-
-    private static char getRandomOperator(Random r) {
-        return ms_operators.charAt(r.nextInt(ms_operators.length()));
-    }
-    private static char getRandomOperator() {
-        return getRandomOperator(new Random());
-    }
-
-    public static String generateEquation(Random r, int equationLength) {
-        String equation = "";
-        int num1 = getRandomNumber(r);
-        int num2 = getRandomNumber(r);
-        char op = getRandomOperator(r);
-
-        if (op == '-')
-            if (num1 < num2) {
-                int tmp = num1;
-                num1 = num2;
-                num2 = tmp;
-            }
-
-        equation += num1;
-        equation += op;
-        equation += num2;
-
-        if (equation.length() != equationLength)
-            return generateEquation(r, equationLength);
-
-        return equation;
-    }
-    public static String generateEquation(int equationLength) {
-        return generateEquation(new Random(), equationLength);
-    }
-    public static String generateEquation() {
-        Random r = new Random();
-        return generateEquation(r, r.nextInt(2) + 5);
-    }
-    public static String infixToPrefix(char[] infix) {
-        int l = infix.length;
-        String infix1 = reverse(infix, 0, l - 1);
-        infix = infix1.toCharArray();
-        String prefix = infixToPostfix(infix);
-        prefix = reverse(prefix.toCharArray(), 0, l-1);
-        return prefix;
-    }
-
-    public static ArrayList<IEquationSubject> getRandomEquation(int equationLength) {
-        ArrayList<IEquationSubject> list = new ArrayList<>(7);
-
-        Digit d1 = new Digit();
-        Digit d2 = new Digit();
-        Digit d3 = new Digit();
-        Operator op = new Operator();
-
-        if (op.getOperation() == '-')
-            if (d1.getDigit() < d2.getDigit()) {
-                int tmp = d1.getDigit();
-                d1.setDigit(d2.getDigit());
-                d2.setDigit(tmp);
-            }
-
-
-
-        return null;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
