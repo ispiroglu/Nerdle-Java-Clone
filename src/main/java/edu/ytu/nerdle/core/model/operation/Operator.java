@@ -15,4 +15,9 @@ public class Operator implements IEquationSubject {
     public char getOperation() {
         return operation;
     }
+
+    @Override
+    public String toString() {
+        return operation + "";
+    }
 }
