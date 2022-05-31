@@ -1,16 +1,14 @@
 package edu.ytu.nerdle.frontend.mainPage;
 
 import edu.ytu.nerdle.core.model.saveInfos.SaveInfos;
+import edu.ytu.nerdle.core.model.stats.Stats;
 import edu.ytu.nerdle.frontend.gamePage.GamePage;
 import edu.ytu.nerdle.frontend.testPage.TestPage;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 
 public class MainPage extends JDialog {
     private JPanel contentPane;
@@ -26,10 +24,16 @@ public class MainPage extends JDialog {
     private JButton testButton;
     private JPanel gameNamePanel;
     private JLabel gameNameLabel;
+    private static int leftOffCount;
+    private static int lossCount;
+    private static int winCount;
+    private static int averageGuessCount;
+    private static int averageWinTime;
+
     public MainPage() {
         setContentPane(contentPane);
         setModal(true);
-
+        loadStats();
         newGameButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -58,7 +62,6 @@ public class MainPage extends JDialog {
             continuePanel.setVisible(false);
         }
 
-
         ObjectInputStream finalObjectInputStream = objectInputStream;
 
         continueButton.addMouseListener(new MouseAdapter() {
@@ -81,12 +84,35 @@ public class MainPage extends JDialog {
                 gamePage.pack();
                 if (saveInfos != null)
                     gamePage.initFromSave(saveInfos);
-                else
-                    System.out.println("IMDAT");
                 gamePage.setVisible(true);
-
             }
         });
+    }
+
+    private void saveStats() {
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            objectOutputStream = new ObjectOutputStream(new FileOutputStream("stats.ser"));
+            Stats stats = new Stats(leftOffCount, lossCount, winCount, averageGuessCount, averageWinTime);
+            objectOutputStream.writeObject(stats);
+            objectOutputStream.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void loadStats() {
+        ObjectInputStream objectInputStream;
+        try {
+            objectInputStream = new ObjectInputStream(new FileInputStream("stats.ser"));
+            Stats stats = (Stats) objectInputStream.readObject();
+            leftOffCount = stats.getLeftOffCount();
+            lossCount = stats.getLossCount();
+            winCount = stats.getWinCount();
+            averageGuessCount = stats.getAverageGuessCount();
+            averageWinTime = stats.getAverageWinTime();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
