@@ -946,6 +946,15 @@ public class GamePage extends JDialog {
                             }
                         }
                         if (correctCount == equation.length()) {
+                            MainPage.setWinCount(MainPage.getWinCount() + 1);
+                            MainPage.setAverageGuessCount((MainPage.getAverageGuessCount() + guessCount) / 2);
+                            if (MainPage.getWinCount() == 1)
+                                MainPage.setAverageWinTime((MainPage.getAverageWinTime() + second));
+                            else
+                                MainPage.setAverageWinTime((MainPage.getAverageWinTime() + second) / 2);
+
+                            MainPage.saveStats();
+
                             WinPage winPage = new WinPage();
                             winPage.pack();
                             winPage.setTime(String.valueOf(second));
@@ -961,6 +970,8 @@ public class GamePage extends JDialog {
                             lossPage.pack();
                             lossPage.setEquationString(equation);
                             lossPage.setVisible(true);
+                            MainPage.setLossCount(MainPage.getLossCount() + 1);
+                            MainPage.saveStats();
                             dispose();
                         }
                     }
@@ -1121,6 +1132,8 @@ public class GamePage extends JDialog {
                 ((JPanel)selectedLabel.getParent()).setBorder(BorderFactory.createLineBorder(new Color(Color.black.getRGB())));
             }
         };
+
+
         equationField1_1.addMouseListener(listener);
         equationField1_2.addMouseListener(listener);
         equationField1_3.addMouseListener(listener);
@@ -1209,7 +1222,10 @@ public class GamePage extends JDialog {
                     throw new RuntimeException(ex);
                 }
                 dispose();
+                MainPage.setLeftOffCount((MainPage.getLeftOffCount() + 1));
+                MainPage.saveStats();
                 MainPage mainPage = new MainPage();
+                mainPage.loadStats();
                 mainPage.pack();
                 mainPage.setVisible(true);
             }

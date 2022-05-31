@@ -10,6 +10,7 @@ import java.util.Random;
 public class App {
     public static void main(String[] args) {
         MainPage mainPage = new MainPage();
+        mainPage.loadStats();
         mainPage.pack();
         mainPage.setVisible(true);
     }
