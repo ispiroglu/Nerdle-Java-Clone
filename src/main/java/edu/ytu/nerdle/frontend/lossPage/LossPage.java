@@ -4,13 +4,18 @@ import javax.swing.*;
 
 public class LossPage extends JDialog {
     private JPanel contentPane;
+    private JPanel lossPanel;
+    private JLabel equationLabel;
     private JButton buttonOK;
-    private JButton buttonCancel;
 
     public LossPage() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+    }
+
+    public void setEquationString(String equationString) {
+       equationLabel.setText("DENKLEM: " + equationString);
     }
 
     public static void main(String[] args) {

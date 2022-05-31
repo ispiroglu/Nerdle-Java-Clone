@@ -1,16 +1,24 @@
 package edu.ytu.nerdle.frontend.gamePage;
 
+import edu.ytu.nerdle.core.model.saveInfos.SaveInfos;
 import edu.ytu.nerdle.core.util.equation.EquationUtil;
 import edu.ytu.nerdle.core.util.string.StringUtil;
 import edu.ytu.nerdle.core.util.validation.inputValidator.InputValidator;
 import edu.ytu.nerdle.frontend.lossPage.LossPage;
+import edu.ytu.nerdle.frontend.mainPage.MainPage;
 import edu.ytu.nerdle.frontend.winningPage.WinPage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GamePage extends JDialog {
     private String equation;
@@ -85,7 +93,7 @@ public class GamePage extends JDialog {
 
     private JPanel guessPanel;
     private JPanel deletePanel;
-    private JPanel operationField2_9;
+    private JPanel finishLaterPanel;
     private JLabel zeroLabel;
     private JLabel oneLabel;
     private JLabel twoLabel;
@@ -112,8 +120,10 @@ public class GamePage extends JDialog {
     private JLabel label1_3;
     private JPanel equalSignPanel;
     private JLabel equalSignLabel;
+    private JLabel timerLabel;
     private JLabel selectedLabel;
-
+    private int second = 0;
+    private boolean timeStarted = false;
     private int guessCount = 0;
     private int selectedIndex = 0;
     private ArrayList<JPanel> rowOne;
@@ -125,14 +135,18 @@ public class GamePage extends JDialog {
     private ArrayList<ArrayList<JPanel>> rows;
 
 
+
     public GamePage() {
         setContentPane(contentPane);
         setModal(true);
 
-        equation = EquationUtil.getEquationString();
-        System.out.println("-----------------------------------");
-        System.out.println(equation);
-        System.out.println("-----------------------------------");
+        if (equation == null)
+        {
+            equation = EquationUtil.getEquationString();
+            System.out.println("-----------------------------------");
+            System.out.println(equation);
+            System.out.println("-----------------------------------");
+        }
 
         rows = new ArrayList<>();
 
@@ -208,13 +222,27 @@ public class GamePage extends JDialog {
         rows.add(rowFour);
         rows.add(rowFive);
         rows.add(rowSix);
+        selectedLabel = (JLabel) rowOne.get(0).getComponent(0);
 
+        for (ArrayList<JPanel> row : rows) {
+            for (JPanel jPanel : row) {
+                jPanel.setBackground(new Color(188,191,196));
+                jPanel.setVisible(false);
+//                ((JLabel)jPanel.getComponent(0)).setText(" ");
+            }
+            for (int i = 0; i < equation.length(); i++)
+            {
+                row.get(i).setBackground(new Color(255,255,245));
+                row.get(i).setVisible(true);
+            }
+        }
 
         equationField1_1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_1.getComponent(0);
                 else
@@ -226,6 +254,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_2.getComponent(0);
                 else
@@ -237,6 +266,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_3.getComponent(0);
                 else
@@ -248,6 +278,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_4.getComponent(0);
                 else
@@ -259,6 +290,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_5.getComponent(0);
                 else
@@ -270,6 +302,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_6.getComponent(0);
                 else
@@ -282,6 +315,7 @@ public class GamePage extends JDialog {
                 super.mouseClicked(e);
 
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_7.getComponent(0);
                 else
@@ -293,6 +327,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_8.getComponent(0);
                 else
@@ -304,6 +339,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 0;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField1_9.getComponent(0);
                 else
@@ -317,6 +353,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_1.getComponent(0);
                 else
@@ -328,6 +365,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_2.getComponent(0);
                 else
@@ -339,6 +377,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_3.getComponent(0);
                 else
@@ -350,6 +389,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_4.getComponent(0);
                 else
@@ -361,6 +401,7 @@ public class GamePage extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_5.getComponent(0);
                 else
@@ -373,6 +414,7 @@ public class GamePage extends JDialog {
                 super.mouseClicked(e);
 
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_6.getComponent(0);
                 else
@@ -385,6 +427,7 @@ public class GamePage extends JDialog {
                 super.mouseClicked(e);
 
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_7.getComponent(0);
                 else
@@ -397,6 +440,7 @@ public class GamePage extends JDialog {
                 super.mouseClicked(e);
 
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_8.getComponent(0);
                 else
@@ -409,6 +453,7 @@ public class GamePage extends JDialog {
                 super.mouseClicked(e);
 
                 selectedIndex = 1;
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField2_9.getComponent(0);
                 else
@@ -420,7 +465,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_1.getComponent(0);
@@ -432,7 +477,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_2.getComponent(0);
@@ -444,7 +489,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_3.getComponent(0);
@@ -456,7 +501,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_4.getComponent(0);
@@ -468,7 +513,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_5.getComponent(0);
@@ -480,7 +525,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_6.getComponent(0);
@@ -492,7 +537,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_7.getComponent(0);
@@ -504,7 +549,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_8.getComponent(0);
@@ -516,7 +561,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 2;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField3_9.getComponent(0);
@@ -529,7 +574,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_1.getComponent(0);
@@ -541,7 +586,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_2.getComponent(0);
@@ -553,7 +598,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_3.getComponent(0);
@@ -565,7 +610,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_4.getComponent(0);
@@ -577,7 +622,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_5.getComponent(0);
@@ -589,7 +634,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_6.getComponent(0);
@@ -601,7 +646,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_7.getComponent(0);
@@ -613,9 +658,10 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
+
                     selectedLabel = (JLabel) equationField4_8.getComponent(0);
                 else
                     JOptionPane.showMessageDialog(null, "Bu bölümü seçemezsiniz");
@@ -625,7 +671,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 3;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField4_9.getComponent(0);
@@ -638,7 +684,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_1.getComponent(0);
@@ -650,7 +696,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_2.getComponent(0);
@@ -662,7 +708,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_3.getComponent(0);
@@ -674,7 +720,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_4.getComponent(0);
@@ -686,7 +732,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_5.getComponent(0);
@@ -698,10 +744,11 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
-                if (selectedIndex == guessCount)
+                if (selectedIndex == guessCount){
                     selectedLabel = (JLabel) equationField5_6.getComponent(0);
+                }
                 else
                     JOptionPane.showMessageDialog(null, "Bu bölümü seçemezsiniz");
             }
@@ -710,7 +757,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_7.getComponent(0);
@@ -722,7 +769,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_8.getComponent(0);
@@ -734,7 +781,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 4;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField5_9.getComponent(0);
@@ -747,7 +794,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_1.getComponent(0);
@@ -759,7 +806,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_2.getComponent(0);
@@ -771,7 +818,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_3.getComponent(0);
@@ -783,7 +830,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_4.getComponent(0);
@@ -795,7 +842,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_5.getComponent(0);
@@ -807,7 +854,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_6.getComponent(0);
@@ -819,7 +866,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_7.getComponent(0);
@@ -831,7 +878,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_8.getComponent(0);
@@ -843,7 +890,7 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-
+                ((JPanel)selectedLabel.getParent()).setBorder(null);
                 selectedIndex = 5;
                 if (selectedIndex == guessCount)
                     selectedLabel = (JLabel) equationField6_9.getComponent(0);
@@ -875,7 +922,8 @@ public class GamePage extends JDialog {
                         JOptionPane.showMessageDialog(null, "Lütfen girdiğiniz denklemin doğruluğundan emin olun.");
                     else {
                         int correctCount = 0;
-                        for (JPanel iteratorPanel : selectedRow) {
+                        for (int i = 0; i < equation.length(); i++) {
+                            JPanel iteratorPanel = selectedRow.get(i);
                             String equationChar =  "" + equation.charAt(idx++);
                             String inputChar = ((JLabel)iteratorPanel.getComponent(0)).getText();
 
@@ -900,16 +948,18 @@ public class GamePage extends JDialog {
                         if (correctCount == equation.length()) {
                             WinPage winPage = new WinPage();
                             winPage.pack();
+                            winPage.setTime(String.valueOf(second));
                             winPage.setVisible(true);
                             dispose();
                         }
                         else {
                             guessCount++;
                         }
-                        if (guessCount > 6)
+                        if (guessCount >= 6)
                         {
                             LossPage lossPage = new LossPage();
                             lossPage.pack();
+                            lossPage.setEquationString(equation);
                             lossPage.setVisible(true);
                             dispose();
                         }
@@ -1035,8 +1085,13 @@ public class GamePage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if (selectedLabel != null)
+                if (selectedLabel != null) {
                     selectedLabel.setText("");
+                    JPanel selectedPanel = (JPanel) selectedLabel.getParent();
+                    int idx = rows.get(selectedIndex).indexOf(selectedPanel) - 1;
+                    if (idx >= 0)
+                        selectedLabel = (JLabel) rows.get(selectedIndex).get(idx).getComponent(0);
+                }
             }
         });
         equalSignPanel.addMouseListener(new MouseAdapter() {
@@ -1047,7 +1102,145 @@ public class GamePage extends JDialog {
                     selectedLabel.setText("=");
             }
         });
+
+        MouseAdapter listener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (!timeStarted) {
+                    var timer = new Timer(1000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            timerLabel.setText(String.valueOf(second));
+                            timeStarted = true;
+                            ++second;
+                        }
+                    });
+                    timer.start();
+                }
+                ((JPanel)selectedLabel.getParent()).setBorder(BorderFactory.createLineBorder(new Color(Color.black.getRGB())));
+            }
+        };
+        equationField1_1.addMouseListener(listener);
+        equationField1_2.addMouseListener(listener);
+        equationField1_3.addMouseListener(listener);
+        equationField1_4.addMouseListener(listener);
+        equationField1_5.addMouseListener(listener);
+        equationField1_6.addMouseListener(listener);
+        equationField1_7.addMouseListener(listener);
+        equationField1_8.addMouseListener(listener);
+        equationField1_9.addMouseListener(listener);
+        equationField2_1.addMouseListener(listener);
+        equationField2_2.addMouseListener(listener);
+        equationField2_3.addMouseListener(listener);
+        equationField2_4.addMouseListener(listener);
+        equationField2_5.addMouseListener(listener);
+        equationField2_6.addMouseListener(listener);
+        equationField2_7.addMouseListener(listener);
+        equationField2_8.addMouseListener(listener);
+        equationField2_9.addMouseListener(listener);
+        equationField3_1.addMouseListener(listener);
+        equationField3_2.addMouseListener(listener);
+        equationField3_3.addMouseListener(listener);
+        equationField3_4.addMouseListener(listener);
+        equationField3_5.addMouseListener(listener);
+        equationField3_6.addMouseListener(listener);
+        equationField3_7.addMouseListener(listener);
+        equationField3_8.addMouseListener(listener);
+        equationField3_9.addMouseListener(listener);
+        equationField4_1.addMouseListener(listener);
+        equationField4_2.addMouseListener(listener);
+        equationField4_3.addMouseListener(listener);
+        equationField4_4.addMouseListener(listener);
+        equationField4_5.addMouseListener(listener);
+        equationField4_6.addMouseListener(listener);
+        equationField4_7.addMouseListener(listener);
+        equationField4_8.addMouseListener(listener);
+        equationField4_9.addMouseListener(listener);
+        equationField5_1.addMouseListener(listener);
+        equationField5_2.addMouseListener(listener);
+        equationField5_3.addMouseListener(listener);
+        equationField5_4.addMouseListener(listener);
+        equationField5_5.addMouseListener(listener);
+        equationField5_6.addMouseListener(listener);
+        equationField5_7.addMouseListener(listener);
+        equationField5_8.addMouseListener(listener);
+        equationField5_9.addMouseListener(listener);
+        equationField6_1.addMouseListener(listener);
+        equationField6_2.addMouseListener(listener);
+        equationField6_3.addMouseListener(listener);
+        equationField6_4.addMouseListener(listener);
+        equationField6_5.addMouseListener(listener);
+        equationField6_6.addMouseListener(listener);
+        equationField6_7.addMouseListener(listener);
+        equationField6_8.addMouseListener(listener);
+        equationField6_9.addMouseListener(listener);
+
+        finishLaterPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                try {
+                    ArrayList<ArrayList<Color>> colorMatrix = new ArrayList<>();
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                            new FileOutputStream("lastGame.ser"));
+                    for (ArrayList<JPanel> row : rows) {
+                        ArrayList<Color> colors = new ArrayList<>();
+                        for (JPanel jPanel : row) {
+                            colors.add(jPanel.getBackground());
+                        }
+                        colorMatrix.add(colors);
+                    }
+                    SaveInfos saveInfos = new SaveInfos(
+                            colorMatrix,
+                            StringUtil.arrayListToString(rowOne),
+                            StringUtil.arrayListToString(rowTwo),
+                            StringUtil.arrayListToString(rowThree),
+                            StringUtil.arrayListToString(rowFive),
+                            StringUtil.arrayListToString(rowFive),
+                            StringUtil.arrayListToString(rowSix),
+                            equation, second, guessCount
+                    );
+                    objectOutputStream.writeObject(saveInfos);
+                    objectOutputStream.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    throw new RuntimeException(ex);
+                }
+                dispose();
+                MainPage mainPage = new MainPage();
+                mainPage.pack();
+                mainPage.setVisible(true);
+            }
+        });
     }
+    public void initFromSave(SaveInfos saveInfos) {
+        equation = saveInfos.getEquation();
+        System.out.println(equation);
+        second = saveInfos.getSecond();
+        guessCount = saveInfos.getGuessCount();
+        int idx = 0;
+        for (ArrayList<JPanel> row : rows) {
+            for (int i = 0; i < equation.length(); i++) {
+                try {
+                    ((JLabel) row.get(i).getComponent(0)).setText((saveInfos.getRows().get(idx).charAt(i) + "").trim());
+                    row.get(i).setBackground(saveInfos.getColorMatrix().get(idx).get(i));
+                } catch (StringIndexOutOfBoundsException ignored) {}
+            }
+            idx++;
+        }
+        for (ArrayList<JPanel> row : rows) {
+            for (JPanel jPanel : row) {
+                jPanel.setVisible(false);
+            }
+            for (int i = 0; i < equation.length(); i++)
+            {
+                row.get(i).setVisible(true);
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         GamePage dialog = new GamePage();
