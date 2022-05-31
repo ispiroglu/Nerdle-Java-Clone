@@ -1,6 +1,6 @@
 package edu.ytu.nerdle.frontend.gamePage;
 
-import edu.ytu.nerdle.core.model.saveInfos.SaveInfos;
+import edu.ytu.nerdle.core.model.gameInfos.GameInfos;
 import edu.ytu.nerdle.core.util.equation.EquationUtil;
 import edu.ytu.nerdle.core.util.string.StringUtil;
 import edu.ytu.nerdle.core.util.validation.inputValidator.InputValidator;
@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class GamePage extends JDialog {
     private String equation;
@@ -137,16 +136,9 @@ public class GamePage extends JDialog {
 
 
     public GamePage() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
-
-        if (equation == null)
-        {
-            equation = EquationUtil.getEquationString();
-            System.out.println("-----------------------------------");
-            System.out.println(equation);
-            System.out.println("-----------------------------------");
-        }
 
         rows = new ArrayList<>();
 
@@ -224,18 +216,7 @@ public class GamePage extends JDialog {
         rows.add(rowSix);
         selectedLabel = (JLabel) rowOne.get(0).getComponent(0);
 
-        for (ArrayList<JPanel> row : rows) {
-            for (JPanel jPanel : row) {
-                jPanel.setBackground(new Color(188,191,196));
-                jPanel.setVisible(false);
-//                ((JLabel)jPanel.getComponent(0)).setText(" ");
-            }
-            for (int i = 0; i < equation.length(); i++)
-            {
-                row.get(i).setBackground(new Color(255,255,245));
-                row.get(i).setVisible(true);
-            }
-        }
+
 
         equationField1_1.addMouseListener(new MouseAdapter() {
             @Override
@@ -918,7 +899,7 @@ public class GamePage extends JDialog {
                 {
                     idx = 0;
                     var selectedRow = rows.get(selectedIndex);
-                    if (! new InputValidator().isValid(StringUtil.inputToString(selectedRow)))
+                    if (! new InputValidator().isValid(StringUtil.arrayListToString(selectedRow)))
                         JOptionPane.showMessageDialog(null, "Lütfen girdiğiniz denklemin doğruluğundan emin olun.");
                     else {
                         int correctCount = 0;
@@ -946,22 +927,35 @@ public class GamePage extends JDialog {
                             }
                         }
                         if (correctCount == equation.length()) {
+                            MainPage.setWinCount(MainPage.getWinCount() + 1);
+                            MainPage.setAverageGuessCount((MainPage.getAverageGuessCount() + guessCount) / 2);
+                            if (MainPage.getWinCount() == 1)
+                                MainPage.setAverageWinTime((MainPage.getAverageWinTime() + second));
+                            else
+                                MainPage.setAverageWinTime((MainPage.getAverageWinTime() + second) / 2);
+
+                            MainPage.saveStats();
+                            dispose();
                             WinPage winPage = new WinPage();
                             winPage.pack();
                             winPage.setTime(String.valueOf(second));
                             winPage.setVisible(true);
-                            dispose();
+
+
                         }
                         else {
                             guessCount++;
                         }
                         if (guessCount >= 6)
                         {
+                            MainPage.setLossCount(MainPage.getLossCount() + 1);
+                            MainPage.saveStats();
+                            dispose();
                             LossPage lossPage = new LossPage();
                             lossPage.pack();
                             lossPage.setEquationString(equation);
                             lossPage.setVisible(true);
-                            dispose();
+
                         }
                     }
                 }
@@ -1088,9 +1082,13 @@ public class GamePage extends JDialog {
                 if (selectedLabel != null) {
                     selectedLabel.setText("");
                     JPanel selectedPanel = (JPanel) selectedLabel.getParent();
+                    selectedPanel.setBorder(null);
                     int idx = rows.get(selectedIndex).indexOf(selectedPanel) - 1;
-                    if (idx >= 0)
+                    if (idx >= 0) {
                         selectedLabel = (JLabel) rows.get(selectedIndex).get(idx).getComponent(0);
+                        selectedLabel.setBorder(BorderFactory.createLineBorder(new Color(Color.BLACK.getRGB())));
+                    }
+
                 }
             }
         });
@@ -1121,6 +1119,8 @@ public class GamePage extends JDialog {
                 ((JPanel)selectedLabel.getParent()).setBorder(BorderFactory.createLineBorder(new Color(Color.black.getRGB())));
             }
         };
+
+
         equationField1_1.addMouseListener(listener);
         equationField1_2.addMouseListener(listener);
         equationField1_3.addMouseListener(listener);
@@ -1192,7 +1192,7 @@ public class GamePage extends JDialog {
                         }
                         colorMatrix.add(colors);
                     }
-                    SaveInfos saveInfos = new SaveInfos(
+                    GameInfos gameInfos = new GameInfos(
                             colorMatrix,
                             StringUtil.arrayListToString(rowOne),
                             StringUtil.arrayListToString(rowTwo),
@@ -1202,50 +1202,67 @@ public class GamePage extends JDialog {
                             StringUtil.arrayListToString(rowSix),
                             equation, second, guessCount
                     );
-                    objectOutputStream.writeObject(saveInfos);
+                    objectOutputStream.writeObject(gameInfos);
                     objectOutputStream.close();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     throw new RuntimeException(ex);
                 }
                 dispose();
+                MainPage.setLeftOffCount((MainPage.getLeftOffCount() + 1));
+                MainPage.saveStats();
                 MainPage mainPage = new MainPage();
+                mainPage.loadStats();
                 mainPage.pack();
                 mainPage.setVisible(true);
             }
         });
     }
-    public void initFromSave(SaveInfos saveInfos) {
-        equation = saveInfos.getEquation();
+    public void initFromSave(GameInfos gameInfos) {
+        equation = gameInfos.getEquation();
         System.out.println(equation);
-        second = saveInfos.getSecond();
-        guessCount = saveInfos.getGuessCount();
+        second = gameInfos.getSecond();
+        guessCount = gameInfos.getGuessCount();
         int idx = 0;
+
+        initMatrix();
         for (ArrayList<JPanel> row : rows) {
             for (int i = 0; i < equation.length(); i++) {
                 try {
-                    ((JLabel) row.get(i).getComponent(0)).setText((saveInfos.getRows().get(idx).charAt(i) + "").trim());
-                    row.get(i).setBackground(saveInfos.getColorMatrix().get(idx).get(i));
+                    ((JLabel) row.get(i).getComponent(0)).setText((gameInfos.getRows().get(idx).charAt(i) + "").trim());
+                    row.get(i).setBackground(gameInfos.getColorMatrix().get(idx).get(i));
                 } catch (StringIndexOutOfBoundsException ignored) {}
             }
             idx++;
         }
+
+    }
+
+    private void initMatrix() {
         for (ArrayList<JPanel> row : rows) {
             for (JPanel jPanel : row) {
+                jPanel.setBackground(new Color(188,191,196));
                 jPanel.setVisible(false);
             }
             for (int i = 0; i < equation.length(); i++)
             {
+                row.get(i).setBackground(new Color(255,255,245));
                 row.get(i).setVisible(true);
             }
         }
     }
 
-
-    public static void main(String[] args) {
-        GamePage dialog = new GamePage();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
+    public void initNewGame() {
+        if (equation == null)
+        {
+            equation = EquationUtil.getEquationString();
+            System.out.println("-----------------------------------");
+            System.out.println(equation);
+            System.out.println("-----------------------------------");
+        }
+        initMatrix();
     }
+
+
+
 }

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: edu.ytu.nerdle.app.App
+Class-Path: AbsoluteLayout-RELEASE130.jar
+

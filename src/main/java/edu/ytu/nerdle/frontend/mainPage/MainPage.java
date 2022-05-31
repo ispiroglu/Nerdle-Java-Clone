@@ -1,6 +1,6 @@
 package edu.ytu.nerdle.frontend.mainPage;
 
-import edu.ytu.nerdle.core.model.saveInfos.SaveInfos;
+import edu.ytu.nerdle.core.model.gameInfos.GameInfos;
 import edu.ytu.nerdle.core.model.stats.Stats;
 import edu.ytu.nerdle.frontend.gamePage.GamePage;
 import edu.ytu.nerdle.frontend.testPage.TestPage;
@@ -24,6 +24,11 @@ public class MainPage extends JDialog {
     private JButton testButton;
     private JPanel gameNamePanel;
     private JLabel gameNameLabel;
+    private JLabel winCountLabel;
+    private JLabel lossCountLabel;
+    private JLabel leftOffCountLabel;
+    private JLabel averageWinTimeLabel;
+    private JLabel averageGuessCountLabel;
     private static int leftOffCount;
     private static int lossCount;
     private static int winCount;
@@ -31,6 +36,7 @@ public class MainPage extends JDialog {
     private static int averageWinTime;
 
     public MainPage() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
         loadStats();
@@ -42,6 +48,7 @@ public class MainPage extends JDialog {
                 new File("lastGame.ser").delete();
                 dispose();
                 GamePage gamePage = new GamePage();
+                gamePage.initNewGame();
                 gamePage.pack();
                 gamePage.setVisible(true);
             }
@@ -68,10 +75,10 @@ public class MainPage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                SaveInfos saveInfos = null;
+                GameInfos gameInfos = null;
                 if (finalObjectInputStream != null) {
                     try {
-                        saveInfos = (SaveInfos) finalObjectInputStream.readObject();
+                        gameInfos = (GameInfos) finalObjectInputStream.readObject();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (ClassNotFoundException ex) {
@@ -82,14 +89,14 @@ public class MainPage extends JDialog {
                 dispose();
                 GamePage gamePage = new GamePage();
                 gamePage.pack();
-                if (saveInfos != null)
-                    gamePage.initFromSave(saveInfos);
+                if (gameInfos != null)
+                    gamePage.initFromSave(gameInfos);
                 gamePage.setVisible(true);
             }
         });
     }
 
-    private void saveStats() {
+    public static void saveStats() {
         ObjectOutputStream objectOutputStream = null;
         try {
             objectOutputStream = new ObjectOutputStream(new FileOutputStream("stats.ser"));
@@ -100,7 +107,7 @@ public class MainPage extends JDialog {
             ex.printStackTrace();
         }
     }
-    private void loadStats() {
+    public void loadStats() {
         ObjectInputStream objectInputStream;
         try {
             objectInputStream = new ObjectInputStream(new FileInputStream("stats.ser"));
@@ -112,7 +119,57 @@ public class MainPage extends JDialog {
             averageWinTime = stats.getAverageWinTime();
         } catch (Exception ex) {
             ex.printStackTrace();
+            leftOffCount = 0;
+            lossCount = 0;
+            winCount = 0;
+            averageGuessCount = 0;
+            averageWinTime = 0;
         }
+        winCountLabel.setText("TOPLAM KAZANMA SAYISI: " + winCount);
+        lossCountLabel.setText("TOPLAM KAYBETME SAYISI: " + lossCount);
+        averageWinTimeLabel.setText("ORTALAMA KAZANMA SÜRESİ: " + averageWinTime);
+        averageGuessCountLabel.setText("ORTALAMA TAHMİN SAYISI: " + (averageGuessCount + 1));
+        leftOffCountLabel.setText("OYUNU TERK ETME SAYISI: " + leftOffCount);
+    }
+
+    public static int getLeftOffCount() {
+        return leftOffCount;
+    }
+
+    public static void setLeftOffCount(int leftOffCount) {
+        MainPage.leftOffCount = leftOffCount;
+    }
+
+    public static int getLossCount() {
+        return lossCount;
+    }
+
+    public static void setLossCount(int lossCount) {
+        MainPage.lossCount = lossCount;
+    }
+
+    public static int getWinCount() {
+        return winCount;
+    }
+
+    public static void setWinCount(int winCount) {
+        MainPage.winCount = winCount;
+    }
+
+    public static int getAverageGuessCount() {
+        return averageGuessCount;
+    }
+
+    public static void setAverageGuessCount(int averageGuessCount) {
+        MainPage.averageGuessCount = averageGuessCount;
+    }
+
+    public static int getAverageWinTime() {
+        return averageWinTime;
+    }
+
+    public static void setAverageWinTime(int averageWinTime) {
+        MainPage.averageWinTime = averageWinTime;
     }
 
     public static void main(String[] args) {

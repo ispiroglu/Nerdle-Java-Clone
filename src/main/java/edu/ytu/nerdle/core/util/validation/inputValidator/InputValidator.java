@@ -1,6 +1,5 @@
 package edu.ytu.nerdle.core.util.validation.inputValidator;
 
-import edu.ytu.nerdle.core.util.equation.EquationUtil;
 import edu.ytu.nerdle.core.util.equation.EvaluateString;
 import edu.ytu.nerdle.core.util.validation.IValidator;
 

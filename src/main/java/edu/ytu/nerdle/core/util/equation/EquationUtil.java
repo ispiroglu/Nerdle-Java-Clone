@@ -5,7 +5,7 @@ import edu.ytu.nerdle.core.model.equationSubject.IEquationSubject;
 import edu.ytu.nerdle.core.model.operand.Digit;
 
 public class EquationUtil {
-    static String isValidEquation(Equation equation) {
+    private static String isValidEquation(Equation equation) {
         String equationString = "";
         for (IEquationSubject equationSubject : equation.getEquation()) {
             if (equationSubject.getClass() == Digit.class)
