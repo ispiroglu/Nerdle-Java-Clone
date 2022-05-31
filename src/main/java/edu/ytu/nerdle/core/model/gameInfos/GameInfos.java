@@ -1,11 +1,10 @@
-package edu.ytu.nerdle.core.model.saveInfos;
+package edu.ytu.nerdle.core.model.gameInfos;
 
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-public class SaveInfos implements Serializable {
+public class GameInfos implements Serializable {
     private final ArrayList<String> rows;
     private final ArrayList<ArrayList<Color>> colorMatrix;
 
@@ -13,7 +12,7 @@ public class SaveInfos implements Serializable {
     private final int second;
     private final int guessCount;
 
-    public SaveInfos(ArrayList<ArrayList<Color>> colorMatrix, String rowOne, String rowTwo, String rowThree, String rowFour, String rowFive, String rowSix, String equation, int second, int guessCount) {
+    public GameInfos(ArrayList<ArrayList<Color>> colorMatrix, String rowOne, String rowTwo, String rowThree, String rowFour, String rowFive, String rowSix, String equation, int second, int guessCount) {
         rows = new ArrayList<>();
         this.colorMatrix = colorMatrix;
         rows.add(rowOne);

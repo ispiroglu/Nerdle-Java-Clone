@@ -14,6 +14,7 @@ public class LossPage extends JDialog {
     private JButton buttonOK;
 
     public LossPage() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);

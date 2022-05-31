@@ -1,6 +1,5 @@
 package edu.ytu.nerdle.frontend.winningPage;
 
-import com.sun.tools.javac.Main;
 import edu.ytu.nerdle.frontend.mainPage.MainPage;
 
 import javax.swing.*;
@@ -15,7 +14,7 @@ public class WinPage extends JDialog {
     private JButton buttonOK;
 
     public WinPage() {
-
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);

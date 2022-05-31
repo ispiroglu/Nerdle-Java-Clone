@@ -14,6 +14,7 @@ public class TestPage extends JDialog {
     private JButton cancelButton;
 
     public TestPage() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
         generateButton.addMouseListener(new MouseAdapter() {
@@ -32,10 +33,5 @@ public class TestPage extends JDialog {
         });
     }
 
-    public static void main(String[] args) {
-        TestPage dialog = new TestPage();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
+
 }

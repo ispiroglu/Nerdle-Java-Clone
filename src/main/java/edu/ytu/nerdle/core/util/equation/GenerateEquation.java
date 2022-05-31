@@ -1,6 +1,5 @@
 package edu.ytu.nerdle.core.util.equation;
 
-import edu.ytu.nerdle.core.model.equation.Equation;
 import edu.ytu.nerdle.core.model.equationSubject.IEquationSubject;
 import edu.ytu.nerdle.core.model.operand.Digit;
 import edu.ytu.nerdle.core.model.operation.Operator;
@@ -32,27 +31,7 @@ public class GenerateEquation {
         initPosAndOperators();
         initOptions();
 
-        System.out.println("Su ana kadar eldekiler..");
-        System.out.println("Options");
-        for (Digit option : options)
-            System.out.print(option);
-        System.out.println();
-        System.out.println("Operators");
-        for (Operator operator : operators)
-            System.out.print(operator);
-        System.out.println();
-        System.out.println("Positions");
-        for (Integer position : positions) {
-            System.out.println(position);
-        }
-
         initDigits();
-
-        System.out.println("DIGITS");
-        System.out.println(operand1.toString());
-        System.out.println(operand2.toString());
-        System.out.println(operand3.toString());
-
         equation.addAll(operand1);
         equation.add(operators.get(0));
         equation.addAll(operand2);
@@ -60,12 +39,6 @@ public class GenerateEquation {
             equation.add(operators.get(1));
             equation.addAll(operand3);
         }
-
-        System.out.println("EQUATION");
-        System.out.println(equation);
-
-
-
     }
 
     public ArrayList<IEquationSubject> getEquation() {
@@ -131,21 +104,5 @@ public class GenerateEquation {
             positions.set(0, positions.get(1));
             positions.set(1, tmp);
         }
-    }
-
-    public static void main(String[] args) {
-        String equationString;
-        do {
-            System.out.println("--------------------------------------");
-            try {
-                equationString = EquationUtil.isValidEquation(
-                        new Equation(new GenerateEquation().getEquation())
-                );
-            }catch (UnsupportedOperationException e) {
-                equationString = null;
-            }
-        }
-        while (equationString == null) ;
-
     }
 }

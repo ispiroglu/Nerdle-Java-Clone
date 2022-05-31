@@ -1,6 +1,6 @@
 package edu.ytu.nerdle.frontend.mainPage;
 
-import edu.ytu.nerdle.core.model.saveInfos.SaveInfos;
+import edu.ytu.nerdle.core.model.gameInfos.GameInfos;
 import edu.ytu.nerdle.core.model.stats.Stats;
 import edu.ytu.nerdle.frontend.gamePage.GamePage;
 import edu.ytu.nerdle.frontend.testPage.TestPage;
@@ -36,6 +36,7 @@ public class MainPage extends JDialog {
     private static int averageWinTime;
 
     public MainPage() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
         loadStats();
@@ -47,6 +48,7 @@ public class MainPage extends JDialog {
                 new File("lastGame.ser").delete();
                 dispose();
                 GamePage gamePage = new GamePage();
+                gamePage.initNewGame();
                 gamePage.pack();
                 gamePage.setVisible(true);
             }
@@ -73,10 +75,10 @@ public class MainPage extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                SaveInfos saveInfos = null;
+                GameInfos gameInfos = null;
                 if (finalObjectInputStream != null) {
                     try {
-                        saveInfos = (SaveInfos) finalObjectInputStream.readObject();
+                        gameInfos = (GameInfos) finalObjectInputStream.readObject();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (ClassNotFoundException ex) {
@@ -87,8 +89,8 @@ public class MainPage extends JDialog {
                 dispose();
                 GamePage gamePage = new GamePage();
                 gamePage.pack();
-                if (saveInfos != null)
-                    gamePage.initFromSave(saveInfos);
+                if (gameInfos != null)
+                    gamePage.initFromSave(gameInfos);
                 gamePage.setVisible(true);
             }
         });
